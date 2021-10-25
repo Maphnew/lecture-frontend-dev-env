@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 
 const mode = "production"
@@ -76,12 +77,14 @@ module.exports = {
     ...(process.env.NODE_ENV === "production"
       ? [new MiniCssExtractPlugin({ filename: `[name].css` })]
       : []),
-    new CopyPlugin([
-      {
-        from: "./node_modules/axios/dist/axios.min.js",
-        to: "./axios.min.js", // 목적지 파일에 들어간다
-      },
-    ]),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: "./node_modules/axios/dist/axios.min.js",
+          to: "./axios.min.js", // 목적지 파일에 들어간다
+        },
+      ]
+    }),
   ],
   optimization: {
     minimizer: mode === "production" ? [new OptimizeCSSAssetsPlugin(), new TerserPlugin({
